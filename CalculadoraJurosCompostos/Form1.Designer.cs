@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle37 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle38 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gbInput = new System.Windows.Forms.GroupBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtValorInicial = new System.Windows.Forms.TextBox();
-            this.txtValorMensal = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtTaxaJuros = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.btnCalcular = new System.Windows.Forms.Button();
+            this.cbPeriodo = new System.Windows.Forms.ComboBox();
             this.txtPeriodo = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.cbPeriodo = new System.Windows.Forms.ComboBox();
-            this.btnCalcular = new System.Windows.Forms.Button();
+            this.txtTaxaJuros = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtValorMensal = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtValorInicial = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.gbCalculo = new System.Windows.Forms.GroupBox();
             this.dgvCalculo = new System.Windows.Forms.DataGridView();
             this.Ano = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Mes = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -50,12 +50,14 @@
             this.TotalJuros = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TotalAcumulado = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.gbInput.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.gbCalculo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCalculo)).BeginInit();
             this.SuspendLayout();
             // 
             // gbInput
             // 
+            this.gbInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.gbInput.Controls.Add(this.btnCalcular);
             this.gbInput.Controls.Add(this.cbPeriodo);
             this.gbInput.Controls.Add(this.txtPeriodo);
@@ -74,61 +76,48 @@
             this.gbInput.TabStop = false;
             this.gbInput.Text = "Entradas";
             // 
-            // groupBox1
+            // btnCalcular
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.dgvCalculo);
-            this.groupBox1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(388, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(682, 426);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Cálculo";
+            this.btnCalcular.Location = new System.Drawing.Point(9, 132);
+            this.btnCalcular.Name = "btnCalcular";
+            this.btnCalcular.Size = new System.Drawing.Size(348, 23);
+            this.btnCalcular.TabIndex = 9;
+            this.btnCalcular.Text = "Calcular";
+            this.btnCalcular.UseVisualStyleBackColor = true;
+            this.btnCalcular.Click += new System.EventHandler(this.btnCalcular_Click);
             // 
-            // label1
+            // cbPeriodo
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(6, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 15);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Valor Inicial";
+            this.cbPeriodo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbPeriodo.FormattingEnabled = true;
+            this.cbPeriodo.Items.AddRange(new object[] {
+            "Anos",
+            "Meses"});
+            this.cbPeriodo.Location = new System.Drawing.Point(236, 91);
+            this.cbPeriodo.Name = "cbPeriodo";
+            this.cbPeriodo.Size = new System.Drawing.Size(121, 23);
+            this.cbPeriodo.TabIndex = 8;
+            this.cbPeriodo.KeyUp += new System.Windows.Forms.KeyEventHandler(this.cbPeriodo_KeyUp);
             // 
-            // txtValorInicial
+            // txtPeriodo
             // 
-            this.txtValorInicial.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtValorInicial.Location = new System.Drawing.Point(9, 38);
-            this.txtValorInicial.Name = "txtValorInicial";
-            this.txtValorInicial.Size = new System.Drawing.Size(105, 23);
-            this.txtValorInicial.TabIndex = 1;
-            this.txtValorInicial.Click += new System.EventHandler(this.txtValorInicial_Click);
-            this.txtValorInicial.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtValorInicial_KeyUp);
-            this.txtValorInicial.Leave += new System.EventHandler(this.txtValorInicial_Leave);
+            this.txtPeriodo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPeriodo.Location = new System.Drawing.Point(125, 91);
+            this.txtPeriodo.Name = "txtPeriodo";
+            this.txtPeriodo.Size = new System.Drawing.Size(105, 23);
+            this.txtPeriodo.TabIndex = 7;
+            this.txtPeriodo.Click += new System.EventHandler(this.txtPeriodo_Click);
+            this.txtPeriodo.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPeriodo_KeyUp);
             // 
-            // txtValorMensal
+            // label4
             // 
-            this.txtValorMensal.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtValorMensal.Location = new System.Drawing.Point(125, 37);
-            this.txtValorMensal.Name = "txtValorMensal";
-            this.txtValorMensal.Size = new System.Drawing.Size(105, 23);
-            this.txtValorMensal.TabIndex = 3;
-            this.txtValorMensal.Click += new System.EventHandler(this.txtValorMensal_Click);
-            this.txtValorMensal.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtValorMensal_KeyUp);
-            this.txtValorMensal.Leave += new System.EventHandler(this.txtValorMensal_Leave);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(122, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(74, 15);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Valor Mensal";
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(122, 73);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(61, 15);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Perído em";
             // 
             // txtTaxaJuros
             // 
@@ -151,47 +140,61 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Taxa de Juros Anual";
             // 
-            // txtPeriodo
+            // txtValorMensal
             // 
-            this.txtPeriodo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPeriodo.Location = new System.Drawing.Point(125, 91);
-            this.txtPeriodo.Name = "txtPeriodo";
-            this.txtPeriodo.Size = new System.Drawing.Size(105, 23);
-            this.txtPeriodo.TabIndex = 7;
-            this.txtPeriodo.Click += new System.EventHandler(this.txtPeriodo_Click);
-            this.txtPeriodo.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtPeriodo_KeyUp);
+            this.txtValorMensal.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtValorMensal.Location = new System.Drawing.Point(125, 37);
+            this.txtValorMensal.Name = "txtValorMensal";
+            this.txtValorMensal.Size = new System.Drawing.Size(105, 23);
+            this.txtValorMensal.TabIndex = 3;
+            this.txtValorMensal.Click += new System.EventHandler(this.txtValorMensal_Click);
+            this.txtValorMensal.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtValorMensal_KeyUp);
+            this.txtValorMensal.Leave += new System.EventHandler(this.txtValorMensal_Leave);
             // 
-            // label4
+            // label2
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(122, 73);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 15);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Perído em";
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(122, 19);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(74, 15);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Valor Mensal";
             // 
-            // cbPeriodo
+            // txtValorInicial
             // 
-            this.cbPeriodo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbPeriodo.FormattingEnabled = true;
-            this.cbPeriodo.Items.AddRange(new object[] {
-            "Anos",
-            "Meses"});
-            this.cbPeriodo.Location = new System.Drawing.Point(236, 91);
-            this.cbPeriodo.Name = "cbPeriodo";
-            this.cbPeriodo.Size = new System.Drawing.Size(121, 23);
-            this.cbPeriodo.TabIndex = 8;
+            this.txtValorInicial.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtValorInicial.Location = new System.Drawing.Point(9, 38);
+            this.txtValorInicial.Name = "txtValorInicial";
+            this.txtValorInicial.Size = new System.Drawing.Size(105, 23);
+            this.txtValorInicial.TabIndex = 1;
+            this.txtValorInicial.Click += new System.EventHandler(this.txtValorInicial_Click);
+            this.txtValorInicial.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtValorInicial_KeyUp);
+            this.txtValorInicial.Leave += new System.EventHandler(this.txtValorInicial_Leave);
             // 
-            // btnCalcular
+            // label1
             // 
-            this.btnCalcular.Location = new System.Drawing.Point(9, 132);
-            this.btnCalcular.Name = "btnCalcular";
-            this.btnCalcular.Size = new System.Drawing.Size(348, 23);
-            this.btnCalcular.TabIndex = 9;
-            this.btnCalcular.Text = "Calcular";
-            this.btnCalcular.UseVisualStyleBackColor = true;
-            this.btnCalcular.Click += new System.EventHandler(this.btnCalcular_Click);
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(6, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(67, 15);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Valor Inicial";
+            // 
+            // gbCalculo
+            // 
+            this.gbCalculo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbCalculo.Controls.Add(this.dgvCalculo);
+            this.gbCalculo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbCalculo.Location = new System.Drawing.Point(388, 12);
+            this.gbCalculo.Name = "gbCalculo";
+            this.gbCalculo.Size = new System.Drawing.Size(546, 426);
+            this.gbCalculo.TabIndex = 1;
+            this.gbCalculo.TabStop = false;
+            this.gbCalculo.Text = "Cálculo";
             // 
             // dgvCalculo
             // 
@@ -213,9 +216,10 @@
             this.dgvCalculo.Location = new System.Drawing.Point(6, 20);
             this.dgvCalculo.Name = "dgvCalculo";
             this.dgvCalculo.ReadOnly = true;
+            this.dgvCalculo.RowHeadersVisible = false;
             this.dgvCalculo.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dgvCalculo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCalculo.Size = new System.Drawing.Size(670, 400);
+            this.dgvCalculo.Size = new System.Drawing.Size(534, 400);
             this.dgvCalculo.TabIndex = 0;
             // 
             // Ano
@@ -232,9 +236,9 @@
             // 
             // Juros
             // 
-            dataGridViewCellStyle37.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle37.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.Juros.DefaultCellStyle = dataGridViewCellStyle37;
+            dataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.Juros.DefaultCellStyle = dataGridViewCellStyle11;
             this.Juros.HeaderText = "Juros Mensais ($)";
             this.Juros.Name = "Juros";
             this.Juros.ReadOnly = true;
@@ -253,9 +257,9 @@
             // 
             // TotalAcumulado
             // 
-            dataGridViewCellStyle38.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle38.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.TotalAcumulado.DefaultCellStyle = dataGridViewCellStyle38;
+            dataGridViewCellStyle12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.TotalAcumulado.DefaultCellStyle = dataGridViewCellStyle12;
             this.TotalAcumulado.HeaderText = "Total Acumulado";
             this.TotalAcumulado.Name = "TotalAcumulado";
             this.TotalAcumulado.ReadOnly = true;
@@ -264,16 +268,16 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1082, 450);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(946, 450);
+            this.Controls.Add(this.gbCalculo);
             this.Controls.Add(this.gbInput);
             this.Name = "FrmCalculadoraJurosCompostos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Cacluladora de Juros Compostos";
-            this.Load += new System.EventHandler(this.FrmCalculadoraJurosCompostos_Load);
+            this.Load += new System.EventHandler(this.FrmCalculadoraJurosCompostos_Load);            
             this.gbInput.ResumeLayout(false);
             this.gbInput.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
+            this.gbCalculo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCalculo)).EndInit();
             this.ResumeLayout(false);
 
@@ -284,7 +288,7 @@
         private System.Windows.Forms.GroupBox gbInput;
         private System.Windows.Forms.TextBox txtValorInicial;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbCalculo;
         private System.Windows.Forms.ComboBox cbPeriodo;
         private System.Windows.Forms.TextBox txtPeriodo;
         private System.Windows.Forms.Label label4;

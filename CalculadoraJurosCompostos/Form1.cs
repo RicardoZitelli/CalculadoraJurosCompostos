@@ -17,73 +17,121 @@ namespace CalculadoraJurosCompostos
         {
             InitializeComponent();
         }
-
+     
         private void FrmCalculadoraJurosCompostos_Load(object sender, EventArgs e)
-        {
+        {          
+            AjustarCelulas();
             cbPeriodo.SelectedIndex = 0;
-            txtValorInicial.Focus();
+            txtValorInicial.Focus();            
+            
         }
 
         private void btnCalcular_Click(object sender, EventArgs e)
         {
             try
             {
-                dgvCalculo.Rows.Clear();
+                LimparDataGridView();
 
-                double.TryParse(txtValorInicial.Text.Replace("R$", "").Replace(" ", "").Replace(".", ""), out double valorInicial);
-                double.TryParse(txtValorMensal.Text.Replace("R$", "").Replace(" ", "").Replace(".", ""), out double valorMensal);
-                int.TryParse(txtPeriodo.Text, out int periodo);
-                double.TryParse(txtTaxaJuros.Text.Replace("%", "").Replace(" ", ""), out double taxaDeJuros);
+                IniciarVariaveis(out double valorMensal,
+                    out int periodo,
+                    out double taxaDeJurosMensal,
+                    out double totalInvestido,                   
+                    out double totalAcumulado);
 
-                if (cbPeriodo.SelectedIndex == 0) //Tipo "anos" selecionado
-                    periodo *= 12;
+                IncluirValoresIniciaisAoDataGridView(totalInvestido, totalAcumulado);
 
-                var taxaDeJurosMensal = Math.Round(taxaDeJuros / 12, 2);
-                var totalInvestido = valorInicial;
-                var totalJuros = 0.00;
-                var totalAcumulado = valorInicial;
-                var mes = 0;
+                Processar(valorMensal
+                    , periodo
+                    , taxaDeJurosMensal
+                    , totalInvestido
+                    , default
+                    , totalAcumulado                    
+                    , default);
 
-                dgvCalculo.Rows.Add(0,
-                                    0,
-                                    0.ToString("C2"),
-                                    totalInvestido.ToString("C2"),
-                                    0.ToString("C2"),
-                                    totalAcumulado.ToString("C2"));
-
-                for (int i = 1; i <= periodo; i++)
-                {
-                    mes++;
-
-                    if (mes > 12)
-                        mes = 1;
-
-                    var juros = Math.Round(totalAcumulado * taxaDeJurosMensal / 100, 2);
-
-                    totalInvestido += valorMensal;
-                    totalJuros += juros;
-                    totalAcumulado = totalInvestido + totalJuros;
-
-                    var anoAtual = i < 12 ? 1 : Math.Ceiling((i / 12d));
-
-                    dgvCalculo.Rows.Add(anoAtual,
-                                        mes,
-                                        "+ " + juros.ToString("C2"),
-                                        totalInvestido.ToString("C2"),
-                                        totalJuros.ToString("C2"),
-                                        totalAcumulado.ToString("C2"));
-                }
-
-                //Ajustar tamanho das células automáticamente
-                for (int i = 0; i < dgvCalculo.Columns.Count; i++)
-                    dgvCalculo.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                AjustarCelulas();                
             }
             catch (Exception ex)
             {
+                LimparDataGridView();
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        private void LimparDataGridView()
+        {
+            dgvCalculo.Rows.Clear();
+        }
+
+        private void IniciarVariaveis(out double valorMensal
+            ,out int periodo
+            ,out double taxaDeJurosMensal
+            ,out double totalInvestido
+            ,out double totalAcumulado)
+        {
+            double.TryParse(txtValorInicial.Text.Replace("R$", "").Replace(" ", "").Replace(".", ""), out double valorInicial);
+            double.TryParse(txtValorMensal.Text.Replace("R$", "").Replace(" ", "").Replace(".", ""), out valorMensal);
+            int.TryParse(txtPeriodo.Text, out periodo);
+            double.TryParse(txtTaxaJuros.Text.Replace("%", "").Replace(" ", ""), out double taxaDeJuros);
+
+            taxaDeJurosMensal = Math.Round(taxaDeJuros / 12, 2);
+            totalInvestido = valorInicial;          
+            totalAcumulado = valorInicial;
+           
+            if (cbPeriodo.SelectedIndex == 0) //Tipo "anos" selecionado
+                periodo *= 12;
+        }
+
+        private void IncluirValoresIniciaisAoDataGridView(double totalInvestido, double totalAcumulado)
+        {
+            dgvCalculo.Rows.Add(0
+                ,0
+                ,0.ToString("C2")
+                ,totalInvestido.ToString("C2")
+                ,0.ToString("C2")
+                ,totalAcumulado.ToString("C2"));
+        }
               
+        private void Processar(double valorMensal, int periodo, double taxaDeJurosMensal, double totalInvestido, double juros, double totalAcumulado, int mes)
+        {
+            var investimento = new Investimento(valorMensal:valorMensal
+                ,taxaDeJurosMensal: taxaDeJurosMensal
+                ,periodo: periodo                
+                ,totalInvestido: totalInvestido
+                ,totalJuros: default
+                ,totalAcumulado: totalAcumulado
+                ,juros: juros
+                ,ano: default
+                ,mes: default);
+
+            for (int i = 1; i <= investimento.Periodo; i++)
+            {
+                Application.DoEvents();
+
+                investimento.IdentificarAno(i);
+                investimento.IdentificarMes();   
+                
+                investimento = investimento.Processar();
+
+                AdicionarValoresAoDataGridView(investimento);                
+            }
+        }
+
+        private void AdicionarValoresAoDataGridView(Investimento investimento)
+        {
+            dgvCalculo.Rows.Add(investimento.Ano,
+                                           investimento.Mes,
+                                           "+ " + investimento.Juros.ToString("C2"),
+                                           investimento.TotalInvestido.ToString("C2"),
+                                           investimento.TotalJuros.ToString("C2"),
+                                           investimento.TotalAcumulado.ToString("C2"));
+        }
+                
+        private void AjustarCelulas()
+        {
+            for (int i = 0; i < dgvCalculo.Columns.Count; i++)
+                dgvCalculo.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        }
+
         private void txtValorInicial_KeyUp(object sender, KeyEventArgs e)
         {
             PularParaProximoControle(sender, e);
@@ -135,6 +183,11 @@ namespace CalculadoraJurosCompostos
         }
 
         private void txtPeriodo_KeyUp(object sender, KeyEventArgs e)
+        {
+            PularParaProximoControle(sender, e);
+        }
+
+        private void cbPeriodo_KeyUp(object sender, KeyEventArgs e)
         {
             PularParaProximoControle(sender, e);
         }
