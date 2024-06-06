@@ -197,13 +197,14 @@ namespace CalculadoraJurosCompostos
         private string TransformarEmPercentual(TextBox textBox)
         {
             textBox.Text = textBox.Text.Replace(",", ".");
+            textBox.Text = textBox.Text.Replace("%", "");
 
             if (double.TryParse(textBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double valor))
             {
-                return valor.ToString("0.00", CultureInfo.GetCultureInfo("pt-BR")) + " %";
+                return valor.ToString("0.00", CultureInfo.GetCultureInfo("pt-BR")) + "%";
             }
 
-            return "0,00 %";
+            return "0,00%";
         }
 
         private void PularParaProximoControle(object sender, KeyEventArgs @event)

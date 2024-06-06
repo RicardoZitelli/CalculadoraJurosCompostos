@@ -46,7 +46,7 @@ namespace CalculadoraJurosCompostos
         {
             try
             {
-                Juros = Math.Round(TotalAcumulado * TaxaDeJurosMensal / 100, 2);
+                Juros = Math.Round(TotalAcumulado * TaxaDeJurosMensal / 100, 2);               
                 TotalJuros += Juros;
                 TotalInvestido += ValorMensal;
                 TotalAcumulado = TotalInvestido + TotalJuros;
