@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Globalization;
+using System.Text;
 using System.Windows.Forms;
 
 namespace CalculadoraJurosCompostos
 {
     public partial class FrmCalculadoraJurosCompostos : Form
     {
+        private static readonly CultureInfo CulturaBrasil = CultureInfo.GetCultureInfo("pt-BR");
+        private const int MaximoDeDigitos = 15;
+
+        private bool _aplicandoMascara;
+
         public FrmCalculadoraJurosCompostos()
         {
             InitializeComponent();
@@ -25,11 +31,11 @@ namespace CalculadoraJurosCompostos
             {
                 LimparDataGridView();
 
-                IniciarVariaveis(out double valorMensal,
+                IniciarVariaveis(out decimal valorMensal,
                     out int periodo,
-                    out double taxaDeJurosMensal,
-                    out double totalInvestido,                   
-                    out double totalAcumulado);
+                    out decimal taxaDeJurosMensal,
+                    out decimal totalInvestido,
+                    out decimal totalAcumulado);
 
                 IncluirValoresIniciaisAoDataGridView(totalInvestido, totalAcumulado);
 
@@ -55,36 +61,50 @@ namespace CalculadoraJurosCompostos
             dgvCalculo.Rows.Clear();
         }
 
-        private void IniciarVariaveis(out double valorMensal
+        private void IniciarVariaveis(out decimal valorMensal
             ,out int periodo
-            ,out double taxaDeJurosMensal
-            ,out double totalInvestido
-            ,out double totalAcumulado)
+            ,out decimal taxaDeJurosMensal
+            ,out decimal totalInvestido
+            ,out decimal totalAcumulado)
         {
-            double.TryParse(txtValorInicial.Text.Replace("R$", "").Replace(" ", "").Replace(".", ""), out double valorInicial);
-            double.TryParse(txtValorMensal.Text.Replace("R$", "").Replace(" ", "").Replace(".", ""), out valorMensal);
-            int.TryParse(txtPeriodo.Text, out periodo);
-            double.TryParse(txtTaxaJuros.Text.Replace("%", "").Replace(" ", ""), out double taxaDeJuros);
+            decimal valorInicial = ConverterParaDecimal(txtValorInicial.Text);
+            valorMensal = ConverterParaDecimal(txtValorMensal.Text);
+            int.TryParse(txtPeriodo.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out periodo);
+            decimal taxaDeJurosAnual = ConverterParaDecimal(txtTaxaJuros.Text);
 
-            taxaDeJurosMensal = Math.Round(taxaDeJuros / 12, 2);
-            totalInvestido = valorInicial;          
+            taxaDeJurosMensal = ConverterTaxaAnualEmMensal(taxaDeJurosAnual);
+            totalInvestido = valorInicial;
             totalAcumulado = valorInicial;
-           
+
             if (cbPeriodo.SelectedIndex == 0) //Tipo "anos" selecionado
                 periodo *= 12;
         }
 
-        private void IncluirValoresIniciaisAoDataGridView(double totalInvestido, double totalAcumulado)
+        /// <summary>
+        /// Converte uma taxa de juros anual na taxa mensal equivalente (juros compostos):
+        /// taxaMensal = ((1 + taxaAnual) ^ (1/12)) - 1. Ambas em percentual.
+        /// </summary>
+        private static decimal ConverterTaxaAnualEmMensal(decimal taxaAnual)
+        {
+            if (taxaAnual <= -100)
+                return -100;
+
+            double taxaMensal = Math.Pow(1 + ((double)taxaAnual / 100), 1d / 12) - 1;
+
+            return (decimal)(taxaMensal * 100);
+        }
+
+        private void IncluirValoresIniciaisAoDataGridView(decimal totalInvestido, decimal totalAcumulado)
         {
             dgvCalculo.Rows.Add(0
                 ,0
-                ,0.ToString("C2")
-                ,totalInvestido.ToString("C2")
-                ,0.ToString("C2")
-                ,totalAcumulado.ToString("C2"));
+                ,decimal.Zero.ToString("C2", CulturaBrasil)
+                ,totalInvestido.ToString("C2", CulturaBrasil)
+                ,decimal.Zero.ToString("C2", CulturaBrasil)
+                ,totalAcumulado.ToString("C2", CulturaBrasil));
         }
-              
-        private void Processar(double valorMensal, int periodo, double taxaDeJurosMensal, double totalInvestido, double juros, double totalAcumulado, int mes)
+
+        private void Processar(decimal valorMensal, int periodo, decimal taxaDeJurosMensal, decimal totalInvestido, decimal juros, decimal totalAcumulado, int mes)
         {
             var investimento = new Investimento(valorMensal:valorMensal
                 ,taxaDeJurosMensal: taxaDeJurosMensal
@@ -111,10 +131,10 @@ namespace CalculadoraJurosCompostos
         {
             dgvCalculo.Rows.Add(investimento.Ano,
                                            investimento.Mes,
-                                           "+ " + investimento.Juros.ToString("C2"),
-                                           investimento.TotalInvestido.ToString("C2"),
-                                           investimento.TotalJuros.ToString("C2"),
-                                           investimento.TotalAcumulado.ToString("C2"));
+                                           "+ " + investimento.Juros.ToString("C2", CulturaBrasil),
+                                           investimento.TotalInvestido.ToString("C2", CulturaBrasil),
+                                           investimento.TotalJuros.ToString("C2", CulturaBrasil),
+                                           investimento.TotalAcumulado.ToString("C2", CulturaBrasil));
         }
                 
         private void AjustarCelulas()
@@ -126,6 +146,11 @@ namespace CalculadoraJurosCompostos
         private void txtValorInicial_KeyUp(object sender, KeyEventArgs e)
         {
             PularParaProximoControle(sender, e);
+        }
+
+        private void txtValorInicial_TextChanged(object sender, EventArgs e)
+        {
+            AplicarMascara((TextBox)sender, "C2", "");
         }
 
         private void txtValorInicial_Leave(object sender, EventArgs e)
@@ -148,6 +173,11 @@ namespace CalculadoraJurosCompostos
             PularParaProximoControle(sender, e);
         }
 
+        private void txtValorMensal_TextChanged(object sender, EventArgs e)
+        {
+            AplicarMascara((TextBox)sender, "C2", "");
+        }
+
         private void txtValorMensal_Leave(object sender, EventArgs e)
         {
             txtValorMensal.Text = TransformarEmMoeda(sender);
@@ -161,6 +191,11 @@ namespace CalculadoraJurosCompostos
         private void txtTaxaJuros_KeyUp(object sender, KeyEventArgs e)
         {
             PularParaProximoControle(sender, e);
+        }
+
+        private void txtTaxaJuros_TextChanged(object sender, EventArgs e)
+        {
+            AplicarMascara((TextBox)sender, "0.00", "%");
         }
 
         private void txtTaxaJuros_Leave(object sender, EventArgs e)
@@ -186,25 +221,90 @@ namespace CalculadoraJurosCompostos
         private string TransformarEmMoeda(object value)
         {
             if (value is TextBox textBox)
-            {
-                double.TryParse(textBox.Text.Replace("R$", "").Replace(" ", "").Replace(".", ""), out double moeda);
-                return moeda.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"));
-            }
+                return ConverterParaDecimal(textBox.Text).ToString("C2", CulturaBrasil);
 
             return "";
         }
 
         private string TransformarEmPercentual(TextBox textBox)
         {
-            textBox.Text = textBox.Text.Replace(",", ".");
-            textBox.Text = textBox.Text.Replace("%", "");
+            return ConverterParaDecimal(textBox.Text).ToString("0.00", CulturaBrasil) + "%";
+        }
 
-            if (double.TryParse(textBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double valor))
+        /// <summary>
+        /// Reaplica a máscara a cada digitação: considera apenas os dígitos informados e os
+        /// interpreta como centésimos, de modo que os números entrem pela direita
+        /// (1 -> 0,01; 12 -> 0,12; 123 -> 1,23). O cursor é reposicionado antes do sufixo.
+        /// </summary>
+        private void AplicarMascara(TextBox textBox, string formato, string sufixo)
+        {
+            if (_aplicandoMascara)
+                return;
+
+            _aplicandoMascara = true;
+
+            try
             {
-                return valor.ToString("0.00", CultureInfo.GetCultureInfo("pt-BR")) + "%";
+                string digitos = ExtrairDigitos(textBox.Text);
+
+                if (digitos.Length == 0)
+                {
+                    textBox.Clear();
+                    return;
+                }
+
+                decimal valor = decimal.Parse(digitos, NumberStyles.None, CultureInfo.InvariantCulture) / 100m;
+                string texto = valor.ToString(formato, CulturaBrasil) + sufixo;
+
+                textBox.Text = texto;
+                textBox.SelectionStart = texto.Length - sufixo.Length;
+                textBox.SelectionLength = 0;
+            }
+            finally
+            {
+                _aplicandoMascara = false;
+            }
+        }
+
+        /// <summary>
+        /// Extrai apenas os dígitos do texto, descartando zeros à esquerda e limitando a
+        /// quantidade para que o valor sempre caiba em um <see cref="decimal"/>.
+        /// </summary>
+        private static string ExtrairDigitos(string texto)
+        {
+            var digitos = new StringBuilder();
+
+            foreach (char caractere in texto)
+            {
+                if (char.IsDigit(caractere))
+                    digitos.Append(caractere);
             }
 
-            return "0,00%";
+            string resultado = digitos.ToString().TrimStart('0');
+
+            return resultado.Length > MaximoDeDigitos ? resultado.Substring(0, MaximoDeDigitos) : resultado;
+        }
+
+        /// <summary>
+        /// Remove a máscara do texto digitado (R$, %, espaços e separador de milhar), normaliza
+        /// o separador decimal e converte com cultura fixa, para que o resultado não dependa
+        /// da cultura da máquina. Retorna zero quando o texto não é um número válido.
+        /// </summary>
+        private static decimal ConverterParaDecimal(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto))
+                return decimal.Zero;
+
+            string valor = texto.Replace("R$", "")
+                                .Replace("%", "")
+                                .Replace(" ", "")
+                                .Replace(" ", "") //espaço não separável (usado por algumas culturas em "R$ 1.234,56")
+                                .Replace(".", "")
+                                .Replace(",", ".");
+
+            decimal.TryParse(valor, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal resultado);
+
+            return resultado;
         }
 
         private void PularParaProximoControle(object sender, KeyEventArgs @event)

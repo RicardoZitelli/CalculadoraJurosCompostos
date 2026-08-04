@@ -8,23 +8,23 @@ namespace CalculadoraJurosCompostos
 {
     public sealed class Investimento
     {
-        public double ValorMensal { get; set; }
-        public double TaxaDeJurosMensal { get; set; }
+        public decimal ValorMensal { get; set; }
+        public decimal TaxaDeJurosMensal { get; set; }
         public int Periodo { get; set; }
         public int Ano { get; set; }
         public int Mes { get; set; }
-        public double TotalInvestido { get; set; }
-        public double TotalJuros { get; set; }
-        public double TotalAcumulado { get; set; }
-        public double Juros { get; set; }
+        public decimal TotalInvestido { get; set; }
+        public decimal TotalJuros { get; set; }
+        public decimal TotalAcumulado { get; set; }
+        public decimal Juros { get; set; }
 
-        public Investimento(double valorMensal
-            , double taxaDeJurosMensal
+        public Investimento(decimal valorMensal
+            , decimal taxaDeJurosMensal
             , int periodo
-            , double totalInvestido
-            , double totalJuros
-            , double totalAcumulado
-            , double juros
+            , decimal totalInvestido
+            , decimal totalJuros
+            , decimal totalAcumulado
+            , decimal juros
             , int ano
             , int mes)
         {
