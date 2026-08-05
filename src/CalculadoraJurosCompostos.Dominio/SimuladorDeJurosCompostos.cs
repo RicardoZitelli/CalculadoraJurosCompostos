@@ -6,7 +6,6 @@ namespace CalculadoraJurosCompostos.Dominio
     public sealed class SimuladorDeJurosCompostos
     {
         private const int MesesNoAno = 12;
-        private const int CasasDecimaisDaMoeda = 2;
 
         /// <summary>
         /// Simula mês a mês. Os juros de cada mês incidem sobre o saldo anterior ao aporte
@@ -25,9 +24,8 @@ namespace CalculadoraJurosCompostos.Dominio
 
             for (int mes = 1; mes <= totalDeMeses; mes++)
             {
-                decimal juros = Math.Round(
-                    totalAcumulado * parametros.Taxa.PercentualMensal / 100,
-                    CasasDecimaisDaMoeda);
+                decimal juros = Moeda.Arredondar(
+                    totalAcumulado * parametros.Taxa.PercentualMensal / 100);
 
                 totalJuros += juros;
                 totalInvestido += parametros.AporteMensal;
