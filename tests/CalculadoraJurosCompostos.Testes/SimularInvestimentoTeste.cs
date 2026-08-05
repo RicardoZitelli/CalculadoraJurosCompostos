@@ -32,22 +32,13 @@ namespace CalculadoraJurosCompostos.Testes
             Assert.Equal(24, resposta.Evolucao.Count);
         }
 
-        /// <summary>
-        /// Compara campo a campo em vez de comparar as respostas inteiras: SimulacaoResponse
-        /// é record, mas o membro de coleção cai no comparador padrão, que para List é
-        /// igualdade por referência. Duas respostas de mesmo conteúdo nunca seriam iguais.
-        /// </summary>
         [Fact]
         public void Executar_DeveProduzirOMesmoResultado_ParaAnosOuOEquivalenteEmMeses()
         {
             SimulacaoResponse porAnos = _casoDeUso.Executar(Request(2, TipoPeriodo.Anos));
             SimulacaoResponse porMeses = _casoDeUso.Executar(Request(24, TipoPeriodo.Meses));
 
-            Assert.Equal(porAnos.Evolucao, porMeses.Evolucao);
-            Assert.Equal(porAnos.ValorInicial, porMeses.ValorInicial);
-            Assert.Equal(porAnos.TotalInvestido, porMeses.TotalInvestido);
-            Assert.Equal(porAnos.TotalJuros, porMeses.TotalJuros);
-            Assert.Equal(porAnos.TotalAcumulado, porMeses.TotalAcumulado);
+            Assert.Equal(porAnos, porMeses);
         }
 
         /// <summary>
