@@ -3,5 +3,7 @@
     <Project Path="src/CalculadoraJurosCompostos.Dominio/CalculadoraJurosCompostos.Dominio.csproj" />
     <Project Path="src/CalculadoraJurosCompostos.UI/CalculadoraJurosCompostos.UI.csproj" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/CalculadoraJurosCompostos.Testes/CalculadoraJurosCompostos.Testes.csproj" />
+  </Folder>
 </Solution>
