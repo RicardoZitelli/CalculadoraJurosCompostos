@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System;
 using System.Windows.Forms;
+using CalculadoraJurosCompostos.Aplicacao;
+using CalculadoraJurosCompostos.Dominio;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CalculadoraJurosCompostos
 {
@@ -16,7 +16,23 @@ namespace CalculadoraJurosCompostos
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmCalculadoraJurosCompostos());
+
+            using ServiceProvider provedor = ConfigurarServicos();
+
+            Application.Run(provedor.GetRequiredService<FrmCalculadoraJurosCompostos>());
+        }
+
+        /// <summary>
+        /// Composition root: é o único lugar do aplicativo que conhece as implementações
+        /// concretas e as amarra às abstrações.
+        /// </summary>
+        private static ServiceProvider ConfigurarServicos()
+        {
+            return new ServiceCollection()
+                .AddSingleton<SimuladorDeJurosCompostos>()
+                .AddSingleton<ISimularInvestimento, SimularInvestimento>()
+                .AddTransient<FrmCalculadoraJurosCompostos>()
+                .BuildServiceProvider();
         }
     }
 }

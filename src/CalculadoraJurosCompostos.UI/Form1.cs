@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
+using CalculadoraJurosCompostos.Aplicacao;
 using CalculadoraJurosCompostos.Dominio;
 
 namespace CalculadoraJurosCompostos
@@ -11,12 +12,24 @@ namespace CalculadoraJurosCompostos
         private static readonly CultureInfo CulturaBrasil = CultureInfo.GetCultureInfo("pt-BR");
         private const int MaximoDeDigitos = 15;
 
-        private readonly SimuladorDeJurosCompostos _simulador = new SimuladorDeJurosCompostos();
+        private readonly ISimularInvestimento _simularInvestimento;
 
         private bool _aplicandoMascara;
 
+        /// <summary>
+        /// Construtor usado pelo designer do Visual Studio, que precisa instanciar o
+        /// formulário sem passar dependências. Em execução vale o construtor abaixo,
+        /// resolvido pelo contêiner configurado no <see cref="Program"/>.
+        /// </summary>
         public FrmCalculadoraJurosCompostos()
+            : this(new SimularInvestimento(new SimuladorDeJurosCompostos()))
         {
+        }
+
+        public FrmCalculadoraJurosCompostos(ISimularInvestimento simularInvestimento)
+        {
+            _simularInvestimento = simularInvestimento ?? throw new ArgumentNullException(nameof(simularInvestimento));
+
             InitializeComponent();
         }
      
@@ -34,10 +47,10 @@ namespace CalculadoraJurosCompostos
             {
                 LimparDataGridView();
 
-                ParametrosSimulacao parametros = LerParametros();
-                ResultadoSimulacao resultado = _simulador.Simular(parametros);
+                SimulacaoRequest request = LerRequest();
+                SimulacaoResponse resposta = _simularInvestimento.Executar(request);
 
-                ExibirResultado(resultado);
+                ExibirResultado(resposta);
 
                 AjustarCelulas();
             }
@@ -54,32 +67,26 @@ namespace CalculadoraJurosCompostos
         }
 
         /// <summary>
-        /// Lê os campos da tela e monta a entrada da simulação. A escolha do combo é leitura
-        /// de tela; a equivalência entre anos e meses é regra e fica no domínio.
+        /// Lê os campos da tela e monta a entrada do caso de uso. A tela só informa em que
+        /// unidade o prazo foi digitado; converter isso em meses é regra e fica no domínio.
         /// </summary>
-        private ParametrosSimulacao LerParametros()
+        private SimulacaoRequest LerRequest()
         {
-            decimal valorInicial = ConverterParaDecimal(txtValorInicial.Text);
-            decimal aporteMensal = ConverterParaDecimal(txtValorMensal.Text);
-            decimal taxaAnual = ConverterParaDecimal(txtTaxaJuros.Text);
             int.TryParse(txtPeriodo.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int periodo);
 
-            bool periodoEmAnos = cbPeriodo.SelectedIndex == 0;
-
-            return new ParametrosSimulacao(
-                valorInicial: valorInicial,
-                aporteMensal: aporteMensal,
-                taxa: TaxaDeJuros.Anual(taxaAnual),
-                periodo: periodoEmAnos
-                    ? PeriodoDeInvestimento.DeAnos(periodo)
-                    : PeriodoDeInvestimento.DeMeses(periodo));
+            return new SimulacaoRequest(
+                ValorInicial: ConverterParaDecimal(txtValorInicial.Text),
+                AporteMensal: ConverterParaDecimal(txtValorMensal.Text),
+                TaxaAnual: ConverterParaDecimal(txtTaxaJuros.Text),
+                Periodo: periodo,
+                TipoPeriodo: cbPeriodo.SelectedIndex == 0 ? TipoPeriodo.Anos : TipoPeriodo.Meses);
         }
 
-        private void ExibirResultado(ResultadoSimulacao resultado)
+        private void ExibirResultado(SimulacaoResponse resposta)
         {
-            IncluirValoresIniciaisAoDataGridView(resultado.Parametros.ValorInicial);
+            IncluirValoresIniciaisAoDataGridView(resposta.ValorInicial);
 
-            foreach (EvolucaoMensal evolucao in resultado.Evolucao)
+            foreach (EvolucaoMensalResponse evolucao in resposta.Evolucao)
                 AdicionarValoresAoDataGridView(evolucao);
         }
 
@@ -93,7 +100,7 @@ namespace CalculadoraJurosCompostos
                 ,valorInicial.ToString("C2", CulturaBrasil));
         }
 
-        private void AdicionarValoresAoDataGridView(EvolucaoMensal evolucao)
+        private void AdicionarValoresAoDataGridView(EvolucaoMensalResponse evolucao)
         {
             dgvCalculo.Rows.Add(evolucao.Ano,
                                            evolucao.Mes,

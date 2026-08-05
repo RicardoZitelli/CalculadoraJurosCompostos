@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CalculadoraJurosCompostos.Dominio\CalculadoraJurosCompostos.Dominio.csproj" />
+    <ProjectReference Include="..\..\src\CalculadoraJurosCompostos.Aplicacao\CalculadoraJurosCompostos.Aplicacao.csproj" />
   </ItemGroup>
 
 </Project>
