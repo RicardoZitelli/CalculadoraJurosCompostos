@@ -8,8 +8,6 @@ namespace CalculadoraJurosCompostos
 {
     public partial class FrmCalculadoraJurosCompostos : Form
     {
-        private static readonly CultureInfo CulturaBrasil = CultureInfo.GetCultureInfo("pt-BR");
-
         private readonly ISimularInvestimento _simularInvestimento;
 
         private CampoComMascara _valorInicial = null!;
@@ -94,21 +92,27 @@ namespace CalculadoraJurosCompostos
         {
             dgvCalculo.Rows.Add(0
                 ,0
-                ,decimal.Zero.ToString("C2", CulturaBrasil)
-                ,valorInicial.ToString("C2", CulturaBrasil)
-                ,decimal.Zero.ToString("C2", CulturaBrasil)
-                ,valorInicial.ToString("C2", CulturaBrasil));
+                ,EmMoeda(decimal.Zero)
+                ,EmMoeda(valorInicial)
+                ,EmMoeda(decimal.Zero)
+                ,EmMoeda(valorInicial));
         }
 
         private void AdicionarValoresAoDataGridView(EvolucaoMensalResponse evolucao)
         {
             dgvCalculo.Rows.Add(evolucao.Ano,
                                            evolucao.Mes,
-                                           "+ " + evolucao.Juros.ToString("C2", CulturaBrasil),
-                                           evolucao.TotalInvestido.ToString("C2", CulturaBrasil),
-                                           evolucao.TotalJuros.ToString("C2", CulturaBrasil),
-                                           evolucao.TotalAcumulado.ToString("C2", CulturaBrasil));
+                                           "+ " + EmMoeda(evolucao.Juros),
+                                           EmMoeda(evolucao.TotalInvestido),
+                                           EmMoeda(evolucao.TotalJuros),
+                                           EmMoeda(evolucao.TotalAcumulado));
         }
+
+        /// <summary>
+        /// Reaproveita a formatação da máscara de moeda: a decisão de como exibir um valor
+        /// em real fica num lugar só, valendo tanto para os campos quanto para o grid.
+        /// </summary>
+        private static string EmMoeda(decimal valor) => MascaraDeValor.Moeda.Formatar(valor);
 
         private void AjustarCelulas()
         {
