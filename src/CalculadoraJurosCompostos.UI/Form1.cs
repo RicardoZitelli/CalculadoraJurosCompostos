@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
+using CalculadoraJurosCompostos.Dominio;
 
 namespace CalculadoraJurosCompostos
 {
@@ -9,6 +10,8 @@ namespace CalculadoraJurosCompostos
     {
         private static readonly CultureInfo CulturaBrasil = CultureInfo.GetCultureInfo("pt-BR");
         private const int MaximoDeDigitos = 15;
+
+        private readonly SimuladorDeJurosCompostos _simulador = new SimuladorDeJurosCompostos();
 
         private bool _aplicandoMascara;
 
@@ -31,23 +34,12 @@ namespace CalculadoraJurosCompostos
             {
                 LimparDataGridView();
 
-                IniciarVariaveis(out decimal valorMensal,
-                    out int periodo,
-                    out decimal taxaDeJurosMensal,
-                    out decimal totalInvestido,
-                    out decimal totalAcumulado);
+                ParametrosSimulacao parametros = LerParametros();
+                ResultadoSimulacao resultado = _simulador.Simular(parametros);
 
-                IncluirValoresIniciaisAoDataGridView(totalInvestido, totalAcumulado);
+                ExibirResultado(resultado);
 
-                Processar(valorMensal
-                    , periodo
-                    , taxaDeJurosMensal
-                    , totalInvestido
-                    , default
-                    , totalAcumulado                    
-                    , default);
-
-                AjustarCelulas();                
+                AjustarCelulas();
             }
             catch (Exception ex)
             {
@@ -61,80 +53,54 @@ namespace CalculadoraJurosCompostos
             dgvCalculo.Rows.Clear();
         }
 
-        private void IniciarVariaveis(out decimal valorMensal
-            ,out int periodo
-            ,out decimal taxaDeJurosMensal
-            ,out decimal totalInvestido
-            ,out decimal totalAcumulado)
+        /// <summary>
+        /// Lê os campos da tela e monta a entrada da simulação. A escolha do combo é leitura
+        /// de tela; a equivalência entre anos e meses é regra e fica no domínio.
+        /// </summary>
+        private ParametrosSimulacao LerParametros()
         {
             decimal valorInicial = ConverterParaDecimal(txtValorInicial.Text);
-            valorMensal = ConverterParaDecimal(txtValorMensal.Text);
-            int.TryParse(txtPeriodo.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out periodo);
-            decimal taxaDeJurosAnual = ConverterParaDecimal(txtTaxaJuros.Text);
+            decimal aporteMensal = ConverterParaDecimal(txtValorMensal.Text);
+            decimal taxaAnual = ConverterParaDecimal(txtTaxaJuros.Text);
+            int.TryParse(txtPeriodo.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int periodo);
 
-            taxaDeJurosMensal = ConverterTaxaAnualEmMensal(taxaDeJurosAnual);
-            totalInvestido = valorInicial;
-            totalAcumulado = valorInicial;
+            bool periodoEmAnos = cbPeriodo.SelectedIndex == 0;
 
-            if (cbPeriodo.SelectedIndex == 0) //Tipo "anos" selecionado
-                periodo *= 12;
+            return new ParametrosSimulacao(
+                valorInicial: valorInicial,
+                aporteMensal: aporteMensal,
+                taxa: TaxaDeJuros.Anual(taxaAnual),
+                periodo: periodoEmAnos
+                    ? PeriodoDeInvestimento.DeAnos(periodo)
+                    : PeriodoDeInvestimento.DeMeses(periodo));
         }
 
-        /// <summary>
-        /// Converte uma taxa de juros anual na taxa mensal equivalente (juros compostos):
-        /// taxaMensal = ((1 + taxaAnual) ^ (1/12)) - 1. Ambas em percentual.
-        /// </summary>
-        private static decimal ConverterTaxaAnualEmMensal(decimal taxaAnual)
+        private void ExibirResultado(ResultadoSimulacao resultado)
         {
-            if (taxaAnual <= -100)
-                return -100;
+            IncluirValoresIniciaisAoDataGridView(resultado.Parametros.ValorInicial);
 
-            double taxaMensal = Math.Pow(1 + ((double)taxaAnual / 100), 1d / 12) - 1;
-
-            return (decimal)(taxaMensal * 100);
+            foreach (EvolucaoMensal evolucao in resultado.Evolucao)
+                AdicionarValoresAoDataGridView(evolucao);
         }
 
-        private void IncluirValoresIniciaisAoDataGridView(decimal totalInvestido, decimal totalAcumulado)
+        private void IncluirValoresIniciaisAoDataGridView(decimal valorInicial)
         {
             dgvCalculo.Rows.Add(0
                 ,0
                 ,decimal.Zero.ToString("C2", CulturaBrasil)
-                ,totalInvestido.ToString("C2", CulturaBrasil)
+                ,valorInicial.ToString("C2", CulturaBrasil)
                 ,decimal.Zero.ToString("C2", CulturaBrasil)
-                ,totalAcumulado.ToString("C2", CulturaBrasil));
+                ,valorInicial.ToString("C2", CulturaBrasil));
         }
 
-        private void Processar(decimal valorMensal, int periodo, decimal taxaDeJurosMensal, decimal totalInvestido, decimal juros, decimal totalAcumulado, int mes)
+        private void AdicionarValoresAoDataGridView(EvolucaoMensal evolucao)
         {
-            var investimento = new Investimento(valorMensal:valorMensal
-                ,taxaDeJurosMensal: taxaDeJurosMensal
-                ,periodo: periodo                
-                ,totalInvestido: totalInvestido
-                ,totalJuros: default
-                ,totalAcumulado: totalAcumulado
-                ,juros: juros
-                ,ano: default
-                ,mes: default);
-
-            for (int i = 1; i <= investimento.Periodo; i++)
-            {                
-                investimento.IdentificarAno(i);
-                investimento.IdentificarMes();   
-                
-                investimento = investimento.Processar();
-
-                AdicionarValoresAoDataGridView(investimento);                
-            }
-        }
-
-        private void AdicionarValoresAoDataGridView(Investimento investimento)
-        {
-            dgvCalculo.Rows.Add(investimento.Ano,
-                                           investimento.Mes,
-                                           "+ " + investimento.Juros.ToString("C2", CulturaBrasil),
-                                           investimento.TotalInvestido.ToString("C2", CulturaBrasil),
-                                           investimento.TotalJuros.ToString("C2", CulturaBrasil),
-                                           investimento.TotalAcumulado.ToString("C2", CulturaBrasil));
+            dgvCalculo.Rows.Add(evolucao.Ano,
+                                           evolucao.Mes,
+                                           "+ " + evolucao.Juros.ToString("C2", CulturaBrasil),
+                                           evolucao.TotalInvestido.ToString("C2", CulturaBrasil),
+                                           evolucao.TotalJuros.ToString("C2", CulturaBrasil),
+                                           evolucao.TotalAcumulado.ToString("C2", CulturaBrasil));
         }
                 
         private void AjustarCelulas()
