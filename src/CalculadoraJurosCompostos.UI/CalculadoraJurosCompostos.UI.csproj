@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculadoraJurosCompostos.Dominio\CalculadoraJurosCompostos.Dominio.csproj" />
     <ProjectReference Include="..\CalculadoraJurosCompostos.Aplicacao\CalculadoraJurosCompostos.Aplicacao.csproj" />
   </ItemGroup>
 
@@ -16,9 +15,7 @@
     <RootNamespace>CalculadoraJurosCompostos</RootNamespace>
     <AssemblyName>CalculadoraJurosCompostos</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
-    <!-- Habilitar junto com a limpeza do Form1: os handlers de evento declaram
-         (object sender, ...) e o delegate moderno espera (object?, ...). -->
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>

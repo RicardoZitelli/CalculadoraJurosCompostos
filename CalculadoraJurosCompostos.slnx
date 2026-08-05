@@ -6,5 +6,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/CalculadoraJurosCompostos.Testes/CalculadoraJurosCompostos.Testes.csproj" />
+    <Project Path="tests/CalculadoraJurosCompostos.UI.Testes/CalculadoraJurosCompostos.UI.Testes.csproj" />
   </Folder>
 </Solution>

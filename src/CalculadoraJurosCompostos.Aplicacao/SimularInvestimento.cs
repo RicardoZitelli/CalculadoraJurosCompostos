@@ -16,10 +16,25 @@ namespace CalculadoraJurosCompostos.Aplicacao
         {
             ArgumentNullException.ThrowIfNull(request);
 
+            Validar(request);
+
             ParametrosSimulacao parametros = MontarParametros(request);
             ResultadoSimulacao resultado = _simulador.Simular(parametros);
 
             return MontarResposta(resultado);
+        }
+
+        /// <summary>
+        /// Regras de aceitação da entrada. O domínio tolera período zero, que é um caso
+        /// degenerado válido; para o usuário da tela, porém, é campo não preenchido.
+        /// </summary>
+        private static void Validar(SimulacaoRequest request)
+        {
+            if (request.Periodo <= 0)
+                throw new SimulacaoInvalidaException("Informe um período maior que zero.");
+
+            if (request.ValorInicial <= 0 && request.AporteMensal <= 0)
+                throw new SimulacaoInvalidaException("Informe um valor inicial ou um aporte mensal.");
         }
 
         private static ParametrosSimulacao MontarParametros(SimulacaoRequest request) =>

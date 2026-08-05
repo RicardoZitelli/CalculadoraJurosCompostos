@@ -1,8 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Sem sufixo de plataforma: regra de negócio não depende de Windows. -->
-    <TargetFramework>net10.0</TargetFramework>
+    <!-- Segue o target da apresentação, que é Windows-only por ser WinForms. -->
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -20,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\CalculadoraJurosCompostos.Dominio\CalculadoraJurosCompostos.Dominio.csproj" />
-    <ProjectReference Include="..\..\src\CalculadoraJurosCompostos.Aplicacao\CalculadoraJurosCompostos.Aplicacao.csproj" />
+    <ProjectReference Include="..\..\src\CalculadoraJurosCompostos.UI\CalculadoraJurosCompostos.UI.csproj" />
   </ItemGroup>
 
 </Project>

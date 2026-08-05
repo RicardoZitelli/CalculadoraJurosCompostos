@@ -117,7 +117,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(61, 15);
             this.label4.TabIndex = 6;
-            this.label4.Text = "Perído em";
+            this.label4.Text = "Período em";
             // 
             // txtTaxaJuros
             // 
@@ -127,10 +127,7 @@
             this.txtTaxaJuros.Size = new System.Drawing.Size(105, 23);
             this.txtTaxaJuros.TabIndex = 5;
             this.txtTaxaJuros.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtTaxaJuros.TextChanged += new System.EventHandler(this.txtTaxaJuros_TextChanged);
-            this.txtTaxaJuros.Click += new System.EventHandler(this.txtTaxaJuros_Click);
             this.txtTaxaJuros.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtTaxaJuros_KeyUp);
-            this.txtTaxaJuros.Leave += new System.EventHandler(this.txtTaxaJuros_Leave);
             // 
             // label3
             // 
@@ -150,10 +147,7 @@
             this.txtValorMensal.Size = new System.Drawing.Size(105, 23);
             this.txtValorMensal.TabIndex = 3;
             this.txtValorMensal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtValorMensal.TextChanged += new System.EventHandler(this.txtValorMensal_TextChanged);
-            this.txtValorMensal.Click += new System.EventHandler(this.txtValorMensal_Click);
             this.txtValorMensal.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtValorMensal_KeyUp);
-            this.txtValorMensal.Leave += new System.EventHandler(this.txtValorMensal_Leave);
             // 
             // label2
             // 
@@ -173,10 +167,7 @@
             this.txtValorInicial.Size = new System.Drawing.Size(105, 23);
             this.txtValorInicial.TabIndex = 1;
             this.txtValorInicial.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtValorInicial.TextChanged += new System.EventHandler(this.txtValorInicial_TextChanged);
-            this.txtValorInicial.Click += new System.EventHandler(this.txtValorInicial_Click);
             this.txtValorInicial.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtValorInicial_KeyUp);
-            this.txtValorInicial.Leave += new System.EventHandler(this.txtValorInicial_Leave);
             // 
             // label1
             // 
@@ -279,7 +270,7 @@
             this.Controls.Add(this.gbInput);
             this.Name = "FrmCalculadoraJurosCompostos";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Cacluladora de Juros Compostos";
+            this.Text = "Calculadora de Juros Compostos";
             this.Load += new System.EventHandler(this.FrmCalculadoraJurosCompostos_Load);            
             this.gbInput.ResumeLayout(false);
             this.gbInput.PerformLayout();
